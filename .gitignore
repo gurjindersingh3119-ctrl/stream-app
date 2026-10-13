@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+
+# Cache & Temp
+cache/
+*.log
+.system_generated/
+
+# Archive
+*.zip

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetMirror - Watch Free Movies & TV Shows in All Languages</title>
+    <meta name="description" content="Stream movies, web series, TV shows, and anime in HD with multi-language audio and subtitles using fast free embed servers.">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="site-header" id="site-header">
+        <div class="header-left">
+            <a href="#" class="site-logo">
+                <span class="logo-glow"><i class="fa-solid fa-film"></i></span>
+                <span class="logo-text">NET<span class="logo-glow">MIRROR</span></span>
+                <span class="logo-badge">NET77</span>
+            </a>
+            <nav class="nav-menu" id="primary-nav">
+                <button class="nav-link active" data-nav="home"><i class="fa-solid fa-house"></i> Home</button>
+                <button class="nav-link" data-nav="movies"><i class="fa-solid fa-clapperboard"></i> Movies</button>
+                <button class="nav-link" data-nav="tv"><i class="fa-solid fa-tv"></i> TV Shows</button>
+                <button class="nav-link" data-nav="watchlist"><i class="fa-solid fa-bookmark"></i> Watchlist</button>
+                <button class="nav-link" data-nav="history"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+                <button class="nav-link" data-nav="browse"><i class="fa-solid fa-sliders"></i> Filter</button>
+            </nav>
+        </div>
+
+        <div class="header-right">
+            <!-- Search Box -->
+            <div class="search-box-container">
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search movies, shows, anime..." autocomplete="off">
+                    <button class="search-submit-btn" id="search-submit-btn" title="Search"><i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+                <!-- Live Search Suggestions -->
+                <div class="search-suggestions-dropdown" id="search-suggestions"></div>
+            </div>
+
+            <!-- Browse / Filter Button -->
+            <button class="filter-btn-round" id="header-filter-btn" title="Filter & Discover" onclick="NetApp.openBrowseFilterModal()">
+                <i class="fa-solid fa-filter"></i>
+            </button>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" title="Menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== HERO BANNER ==================== -->
+    <section class="hero-banner" id="hero-banner">
+        <div class="hero-background" id="hero-bg-image"></div>
+        <div class="hero-gradient-overlay"></div>
+        
+        <div class="hero-content">
+            <div class="hero-meta-badges">
+                <span class="badge-ott" id="hero-type">TRENDING</span>
+                <span class="badge-rating" id="hero-rating"><i class="fa-solid fa-star"></i> 8.4</span>
+                <span class="badge-year" id="hero-year">2026</span>
+                <span class="badge-uhd">4K ULTRA HD</span>
+            </div>
+            <h1 class="hero-title" id="hero-title">Loading Featured Title...</h1>
+            <p class="hero-overview" id="hero-overview">Explore the largest collection of movies and web series across all languages and streaming hubs.</p>
+            
+            <div class="hero-buttons">
+                <button class="btn-primary" id="hero-play-btn"><i class="fa-solid fa-play"></i> Watch Now</button>
+                <button class="btn-secondary" id="hero-list-btn"><i class="fa-solid fa-plus"></i> My List</button>
+                <button class="btn-secondary" id="hero-info-btn"><i class="fa-solid fa-circle-info"></i> More Info</button>
+            </div>
+        </div>
+
+        <!-- Slider Indicators -->
+        <div class="hero-indicators" id="hero-indicators"></div>
+    </section>
+
+    <!-- ==================== OTT PLATFORM HUBS BAR ==================== -->
+    <div class="ott-platforms-bar" id="ott-platforms-bar"></div>
+
+    <!-- ==================== LANGUAGE PILLS BAR ==================== -->
+    <div class="language-pills-bar" id="language-pills-bar"></div>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main-content" id="main-content">
+
+        <!-- FILTERED RESULTS / CATEGORY VIEW (Hidden by default, shown on filter or search) -->
+        <section class="content-section" id="filtered-results-section" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title" id="filtered-title"><i class="fa-solid fa-filter"></i> Search & Filter Results</h2>
+            </div>
+            <div class="filtered-grid" id="filtered-grid"></div>
+        </section>
+
+        <!-- REGULAR HOME SLIDERS CONTAINER -->
+        <div id="sliders-container">
+
+            <!-- 1. Continue Watching (Rendered from localStorage) -->
+            <section class="content-section" id="continue-watching-section" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Continue Watching</h2>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="continue-watching-slider"></div>
+                </div>
+            </section>
+
+            <!-- 2. Trending Now -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-fire"></i> Trending Today</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="trending-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="trending-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="trending-slider"></div>
+                </div>
+            </section>
+
+            <!-- 3. Popular Movies -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-film"></i> Popular Movies</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="popular-movies-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="popular-movies-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="popular-movies-slider"></div>
+                </div>
+            </section>
+
+            <!-- 4. Popular TV Series -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-tv"></i> Binge-Worthy TV Shows</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="popular-tv-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="popular-tv-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="popular-tv-slider"></div>
+                </div>
+            </section>
+
+            <!-- 5. Bollywood & Indian Cinema -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-clapperboard"></i> Bollywood & Indian Regional Hits</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="bollywood-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="bollywood-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="bollywood-slider"></div>
+                </div>
+            </section>
+
+            <!-- 6. Anime & Animation -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-dragon"></i> Anime & Animation (Sub & Dub)</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="anime-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="anime-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="anime-slider"></div>
+                </div>
+            </section>
+
+            <!-- 7. K-Drama & Asian Cinema -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-heart"></i> Korean Dramas (K-Drama)</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="kdrama-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="kdrama-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="kdrama-slider"></div>
+                </div>
+            </section>
+
+            <!-- 8. Top Rated Classics -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-star"></i> All-Time Top Rated</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="top-rated-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="top-rated-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="top-rated-slider"></div>
+                </div>
+            </section>
+
+            <!-- 9. Action & Thrillers -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fa-solid fa-explosion"></i> Action & Adrenaline</h2>
+                    <div class="slider-controls">
+                        <button class="slider-control-btn" data-slider="action-slider" data-direction="left"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="slider-control-btn" data-slider="action-slider" data-direction="right"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-slider-container">
+                    <div class="media-slider" id="action-slider"></div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ==================== VIDEO PLAYER MODAL & EMBED PLAYER ==================== -->
+    <div class="player-modal" id="player-modal">
+        <div class="player-container">
+
+            <!-- Player Header -->
+            <div class="player-top-bar">
+                <div class="player-title-info">
+                    <span class="player-badge" id="player-media-badge">NOW STREAMING</span>
+                    <h2 id="player-media-title">Movie Title</h2>
+                    <span class="player-subtitle" id="player-media-subtitle">Season 1 • Episode 1</span>
+                </div>
+                <div class="player-top-controls">
+                    <button class="player-action-btn" id="theater-mode-btn" title="Theater Mode"><i class="fa-solid fa-expand"></i> Theater</button>
+                    <button class="player-action-btn" id="fullscreen-btn" title="Fullscreen"><i class="fa-solid fa-maximize"></i> Fullscreen</button>
+                    <button class="player-action-btn" id="reload-player-btn" title="Reload Video"><i class="fa-solid fa-rotate-right"></i> Reload</button>
+                    <button class="player-action-btn" id="popout-player-btn" title="Open in New Tab"><i class="fa-solid fa-arrow-up-right-from-square"></i> Popout</button>
+                    <button class="player-action-btn close-btn" id="close-player-btn" title="Close Player"><i class="fa-solid fa-xmark"></i> Close</button>
+                </div>
+            </div>
+
+            <!-- Embed Video Screen -->
+            <div class="player-screen-wrapper" id="player-screen-wrapper">
+                <div class="player-loader" id="player-loader">
+                    <div class="loader-spinner"></div>
+                    <p>Connecting to embed stream server...</p>
+                </div>
+                <iframe id="embed-iframe" src="about:blank" allowfullscreen="true" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="origin"></iframe>
+            </div>
+
+            <!-- Server Selector Card -->
+            <div class="server-selector-card">
+                <div class="server-card-header">
+                    <h3><i class="fa-solid fa-server"></i> Streaming Servers (Switch if buffering or unavailable):</h3>
+                    <span class="server-tip"><i class="fa-solid fa-circle-info"></i> Server 1 (VidLink) & Server 6 (MultiEmbed) support multi-audio and subtitles</span>
+                </div>
+                <div class="servers-buttons-grid" id="servers-buttons-grid"></div>
+            </div>
+
+            <!-- TV Shows Season & Episode Selector -->
+            <div class="tv-episodes-container" id="tv-episodes-container" style="display: none;">
+                <div class="episodes-header-row">
+                    <div class="season-tabs-container" id="season-tabs-container"></div>
+                    <div class="episode-nav-controls" id="episode-nav-controls"></div>
+                </div>
+                <div class="episodes-grid" id="episodes-grid"></div>
+            </div>
+
+            <!-- Media Details, Cast & Recommendations -->
+            <div class="player-metadata-container" id="player-metadata-container"></div>
+
+        </div>
+    </div>
+
+    <!-- ==================== BROWSE & FILTER MODAL ==================== -->
+    <div class="modal-overlay" id="browse-modal">
+        <div class="modal-content-box">
+            <div class="modal-header-row">
+                <h3><i class="fa-solid fa-sliders"></i> Filter & Discover Media</h3>
+                <button class="modal-close-icon" id="close-browse-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="filter-fields-grid">
+                <div class="filter-group">
+                    <label>Content Type</label>
+                    <select id="filter-type-select">
+                        <option value="movie">Movies</option>
+                        <option value="tv">TV Shows</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Genre</label>
+                    <select id="filter-genre-select">
+                        <option value="">All Genres</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Audio / Language</label>
+                    <select id="filter-lang-select">
+                        <option value="all">All Languages</option>
+                        <option value="en">English</option>
+                        <option value="hi">Hindi (हिन्दी)</option>
+                        <option value="es">Spanish (Español)</option>
+                        <option value="ko">Korean (한국어)</option>
+                        <option value="ja">Japanese (日本語)</option>
+                        <option value="fr">French (Français)</option>
+                        <option value="de">German (Deutsch)</option>
+                        <option value="te">Telugu (తెలుగు)</option>
+                        <option value="ta">Tamil (தமிழ்)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Release Year</label>
+                    <input type="number" id="filter-year-input" placeholder="e.g. 2026, 2025" min="1950" max="2027">
+                </div>
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label>Sort By</label>
+                    <select id="filter-sort-select">
+                        <option value="popularity.desc">Most Popular</option>
+                        <option value="vote_average.desc">Highest Rated</option>
+                        <option value="primary_release_date.desc">Latest Release</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" id="apply-filter-btn">
+                <i class="fa-solid fa-magnifying-glass"></i> Apply Filters
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== TRAILER MODAL ==================== -->
+    <div class="modal-overlay" id="trailer-modal">
+        <div class="trailer-modal-content">
+            <button class="trailer-close-btn" id="close-trailer-modal"><i class="fa-solid fa-xmark"></i></button>
+            <iframe id="trailer-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="site-footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="site-logo">
+                    <span class="logo-glow"><i class="fa-solid fa-film"></i></span>
+                    <span class="logo-text">NET<span class="logo-glow">MIRROR</span></span>
+                    <span class="logo-badge">NET77 CC</span>
+                </div>
+            </div>
+            <div class="footer-status-badge">
+                <span class="pulse-dot"></span>
+                <span>10 Free Embed Servers Online</span>
+            </div>
+        </div>
+        <p class="footer-disclaimer">
+            <strong>Disclaimer:</strong> NetMirror is an indexing search engine and media aggregator. We do not host, store, or upload any video files, media, or copyright protected materials on our servers. All video streams are embedded from publicly available free third-party streaming API providers (VidLink, VidSrc, EmbedSU, AutoEmbed, MultiEmbed, Nxsha Space, YTHD, etc.).
+        </p>
+        <div class="footer-bottom">
+            <span>© 2026 NetMirror / Net77 Clone. All rights reserved.</span>
+            <span>Multi-language streaming aggregator</span>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/static/js/storage.js"></script>
+    <script src="/static/js/player.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
